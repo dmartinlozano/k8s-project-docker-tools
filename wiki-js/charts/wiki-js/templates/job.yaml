@@ -1,0 +1,48 @@
+{{- if eq .Values.fixWizardAndKeycloakSidecar.enabled true }}
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: k8s-project-fix-wiki-js
+  labels:
+{{ include "..labels" . | indent 4 }}
+  annotations:
+    "helm.sh/hook": post-install
+#    "helm.sh/hook-delete-policy": hook-succeeded
+spec:
+  template:
+    metadata:
+      name: "{{.Release.Name}}"
+    spec:
+      restartPolicy: Never
+      containers:
+        - name: post-install-job
+          image: alpine
+          command: ["/bin/sh", "-c", {{ .Files.Get "scripts/fix_wizard_and_keycloack.sh" | quote }} ]
+          env:
+            - name: POSTGRES_HOST
+              value: "{{ .Values.database.host }}"
+            - name: POSTGRES_PORT
+              value: "{{ .Values.database.port }}"
+            - name: POSTGRES_DATABASE
+              value: "{{ .Values.database.name }}"
+            - name: POSTGRES_PASSWORD
+              value: "{{ .Values.database.password }}"
+            - name: POSTGRES_USER
+              value: "{{ .Values.database.user }}"
+            - name: WIKI_JS_HOST
+              value: "{{ .Values.fixWizardAndKeycloakSidecar.wikiConfig.host }}"
+            - name: WIKI_JS_PORT
+              value: "{{ .Values.fixWizardAndKeycloakSidecar.wikiConfig.port }}"
+            - name: WIKI_JS_ADMIN_EMAIL
+              value: "{{ .Values.fixWizardAndKeycloakSidecar.wikiConfig.adminEmail }}"
+            - name: WIKI_JS_ADMIN_PASSWORD
+              value: "{{ .Values.fixWizardAndKeycloakSidecar.wikiConfig.adminPassword }}"
+            - name: WIKI_JS_SITE_URL
+              value: "{{ .Values.fixWizardAndKeycloakSidecar.wikiConfig.siteUrl }}"
+            - name: WIKI_JS_TELEMETRY
+              value: "{{ .Values.fixWizardAndKeycloakSidecar.wikiConfig.telemetry }}"
+            - name: WIKI_JS_KEYCLOAK_PROTOCOL
+              value: "{{ .Values.fixWizardAndKeycloakSidecar.keycloak.protocol }}"
+            - name: WIKI_JS_KEYCLOAK_HOST
+              value: "{{ .Values.fixWizardAndKeycloakSidecar.keycloak.host }}"
+{{- end }}

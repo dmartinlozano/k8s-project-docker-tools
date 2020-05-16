@@ -1,0 +1,33 @@
+image:
+  repository: requarks/wiki
+  tag: 2.3.81
+
+persistentVolume:
+  existingClaim:
+  size: 10Gi
+  accessModes:
+    - ReadWriteOnce
+
+database:
+  type: postgres
+  host: localhost
+  port: 5432
+  name: wiki
+  user: wikijs
+  password: wikijsrocks
+
+service:
+  type: ClusterIP
+
+fixWizardAndKeycloakSidecar:
+  enabled: false
+  wikiConfig:
+    host: wiki-js
+    port: 80
+    adminEmail: admin@example.com
+    adminPassword: admin1234
+    siteUrl: http://wiki-js.com:3000/wiki-js
+    telemetry: false
+  keycloak:
+    protocol: http
+    host: keycloak.com

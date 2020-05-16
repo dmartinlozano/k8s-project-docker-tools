@@ -1,0 +1,13 @@
+[{
+    "name": "gitbucket",
+    "version": "0.0.1",
+    "appVersion": "4.33.0"
+},{
+    "name": "testlink",
+    "version": "0.0.1",
+    "appVersion": "1.9.20"
+},{
+    "name": "wiki-js",
+    "version": "0.0.1",
+    "appVersion": "2.3.81"
+}]

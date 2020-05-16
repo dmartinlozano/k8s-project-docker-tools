@@ -1,0 +1,25 @@
+image:
+  repository: dmartinlozano/testlink
+  tag: latest
+  pullPolicy: Always
+  
+externalDatabase:
+  host: localhost
+  port: 5432
+  name: testlinkdb
+  user: testlink
+  password: testlinkrocks
+
+basePath: /
+
+persistentVolume:
+  enabled: true
+  # Name of the Existing Persistent Volume Claim.
+  # If defined, PVC must be created manually before volume will be bound.
+  existingClaim:
+  size: 10Gi
+  accessModes:
+    - ReadWriteOnce
+
+service:
+  type: ClusterIP

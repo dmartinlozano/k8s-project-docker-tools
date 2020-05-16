@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ template "testlink.fullname" . }}
+  labels:
+    app: "{{ template "testlink.fullname" . }}"
+    chart: "{{ template "testlink.chart" . }}"
+    release: {{ .Release.Name | quote }}
+    heritage: {{ .Release.Name | quote }}
+spec:
+  type: {{ .Values.service.type }}
+  ports:
+    - name: http
+      port: 80
+      targetPort: http
+  selector:
+    app: {{ template "testlink.fullname" . }}

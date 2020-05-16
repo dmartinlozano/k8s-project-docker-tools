@@ -1,0 +1,64 @@
+apiVersion: {{ template "testlink.deployment.apiVersion" . }}
+kind: Deployment
+metadata:
+  name: {{ template "testlink.fullname" . }}
+  labels:
+    app: "{{ template "testlink.fullname" . }}"
+    chart: "{{ template "testlink.chart" . }}"
+    release: {{ .Release.Name | quote }}
+    heritage: {{ .Release.Name | quote }}
+spec:
+  selector:
+    matchLabels:
+      app: "{{ template "testlink.fullname" . }}"
+      release: {{ .Release.Name | quote }}
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: "{{ template "testlink.fullname" . }}"
+        chart: "{{ template "testlink.chart" . }}"
+        release: {{ .Release.Name | quote }}
+    spec:
+      containers:
+      - name: {{ template "testlink.fullname" . }}
+        image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+        imagePullPolicy: {{ .Values.image.pullPolicy | quote }}
+        env:
+        - name: BASE_PATH
+          value: {{ .Values.basePath | quote }}
+        - name: DATABASE_TYPE
+          value: "postgres"
+        - name: DATABASE_HOST
+          value: "{{ .Values.externalDatabase.host }}:{{ .Values.externalDatabase.port }}"
+        - name: DATABASE_NAME
+          value: {{ .Values.externalDatabase.name | quote }}
+        - name: DATABASE_USER
+          value: {{ .Values.externalDatabase.user | quote }}
+        - name: DATABASE_PASS
+          value: {{ .Values.externalDatabase.password | quote }}
+        ports:
+        - name: http
+          containerPort: 80
+        livenessProbe:
+          httpGet:
+            path: "{{.Values.basePath}}/login.php"
+            port: http
+          initialDelaySeconds: 120
+        readinessProbe:
+          httpGet:
+            path: "{{.Values.basePath}}//login.php"
+            port: http
+          initialDelaySeconds: 30
+        volumeMounts:
+          - name: testlink-uploads-volume
+            mountPath: /uploads
+      volumes:
+      - name: testlink-uploads-volume
+      {{- if .Values.persistentVolume.enabled }}
+        persistentVolumeClaim:
+          claimName: {{ template "testlink.fullname" . }}-testlink
+          claimName: {{ if .Values.persistentVolume.existingClaim }}{{ .Values.persistentVolume.existingClaim }}{{- else }}{{ template "testlink.fullname" . }}{{- end }}
+      {{- else }}
+        emptyDir: {}
+      {{- end }}
