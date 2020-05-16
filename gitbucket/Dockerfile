@@ -11,7 +11,7 @@ RUN addgroup -g 1000 gitbucket && \
 
 VOLUME /var/gitbucket
 
-ENV GITBUCKET_VERSION 4.33.0
+ENV GITBUCKET_VERSION %VERSION%
 RUN curl -fL "https://github.com/gitbucket/gitbucket/releases/download/${GITBUCKET_VERSION}/gitbucket.war" -o /usr/share/gitbucket/gitbucket.war
 
 RUN latest_version="$(curl https://api.github.com/repos/gitbucket/gitbucket/releases/latest | jq -r '.tag_name')" && \

@@ -6,7 +6,7 @@ RUN echo "${TIMEZONE}" > /etc/timezone
 RUN yum update -y && \
     yum install -y wget postgresql php php-pear php php-cli php-common php-devel php-gd php-mbstring php-mcrypt php-mysql php-snmp php-pdo_pgsql
 
-ENV TESTLINK_VERSION 1.9.19
+ENV TESTLINK_VERSION %VERSION%
 
 RUN wget -q https://github.com/TestLinkOpenSourceTRMS/testlink-code/archive/$TESTLINK_VERSION.tar.gz -O $TESTLINK_VERSION.tar.gz &&\
     tar zxvf $TESTLINK_VERSION.tar.gz && \

@@ -1,5 +1,0 @@
-apiVersion: v2
-appVersion: "2.0.1"
-description: A Helm chart for Wiki.js
-name: wiki-js
-version: "0.0.2"
