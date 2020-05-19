@@ -14,18 +14,18 @@ jobs:
     - uses: actions/checkout@v2
     - name: Generate docker images if Dockerfile exists
       run: |
-        cat index.json | jq -r '.[]|[.name, .version, .appVersion] | @tsv' |
-        while IFS=$'\t' read -r name version appVersion; do
+        cat index.json | jq -r '.[]|[.name, .version] | @tsv' |
+        while IFS=$'\t' read -r name version; do
           cd $name
           if test -f Dockerfile; then
-            echo "Generating docker for name: $name, version: $version: appVersion: $appVersion"
-            sed -i -e "s/%VERSION%/$appVersion/" ./Dockerfile
-            echo "Building docker image for $name $appVersion"
+            echo "Generating docker for name: $name, version: $version"
+            sed -i -e "s/%VERSION%/$version/" ./Dockerfile
+            echo "Building docker image for $name $version"
             echo "$DOCKERHUB_PASS" | docker login -u dmartinlozano --password-stdin
             docker build . -t dmartinlozano/$name
-            docker tag dmartinlozano/$name:latest dmartinlozano/$name:$appVersion
+            docker tag dmartinlozano/$name:latest dmartinlozano/$name:$version
             docker push dmartinlozano/$name:latest
-            docker push dmartinlozano/$name:$appVersion
+            docker push dmartinlozano/$name:$version
           fi
           cd ..
         done
