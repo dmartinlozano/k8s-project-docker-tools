@@ -56,9 +56,6 @@ jobs:
         helm repo index --merge index.yaml .
         for i in $(find . -name "README.md")
         do
-          echo ""  >>README.tmp
-          echo ""  >>README.tmp
-          echo ""  >>README.tmp
           echo "========================================================================="  >>README.tmp
           cat $i >>README.tmp
         done

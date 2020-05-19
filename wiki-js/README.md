@@ -1,4 +1,4 @@
-# Wiki.js on Docker and Kubernetes [![CircleCI](https://circleci.com/gh/dmartinlozano/wiki-js-docker.svg?style=shield)](https://circleci.com/gh/dmartinlozano/wiki-js-docker)
+# Wiki.js on Docker and Kubernetes
 
 A [Wiki.js](https://github.com/Requarks/wiki) Docker image and Kubernetes Helm chart.
 

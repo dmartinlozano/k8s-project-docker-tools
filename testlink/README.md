@@ -1,5 +1,4 @@
-# Testlink on docker and Kubernetes [![CircleCI](https://circleci.com/gh/dmartinlozano/testlink-docker.svg?style=shield)](https://circleci.com/gh/dmartinlozano/testlink-docker)
-
+# Testlink on docker and Kubernetes
 
 A [Testlink](https://github.com/TestLinkOpenSourceTRMS/testlink-code) Docker image and Kubernetes Helm chart based in https://github.com/bitnami/bitnami-docker-testlink.
 

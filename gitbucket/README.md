@@ -1,4 +1,4 @@
-# GitBucket on Docker and Kubernetes [![CircleCI](https://circleci.com/gh/dmartinlozano/gitbucket-docker.svg?style=shield)](https://circleci.com/gh/dmartinlozano/gitbucket-docker)
+# GitBucket on Docker and Kubernetes
 
 A [GitBucket](https://github.com/gitbucket/gitbucket) Docker image and Kubernetes Helm chart.
 
