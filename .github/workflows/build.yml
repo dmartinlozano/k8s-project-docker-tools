@@ -5,30 +5,72 @@ on:
     - '*'
 
 jobs:
-  docker_build:
+#  docker_build:
+#    runs-on: ubuntu-latest
+#    env:
+#      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} #will automatically be defined
+#      DOCKERHUB_PASS: ${{ secrets.DOCKERHUB_PASS }}
+#    steps:
+#    - uses: actions/checkout@v2
+#    - name: Generate docker images if Dockerfile exists
+#      run: |
+#        cat index.json | jq -r '.[]|[.name, .version, .appVersion] | @tsv' |
+#        while IFS=$'\t' read -r name version appVersion; do
+#          cd $name
+#          if test -f Dockerfile; then
+#            echo "Generating docker for name: $name, version: $version: appVersion: $appVersion"
+#            sed -i -e "s/%VERSION%/$appVersion/" ./Dockerfile
+#            echo "Building docker image for $name $appVersion"
+#            echo "$DOCKERHUB_PASS" | docker login -u dmartinlozano --password-stdin
+#            docker build . -t dmartinlozano/$name
+#            docker tag dmartinlozano/$name:latest dmartinlozano/$name:$appVersion
+#            docker push dmartinlozano/$name:latest
+#            docker push dmartinlozano/$name:$appVersion
+#          fi
+#          cd ..
+#        done
+  helm_build:
+#    needs: docker_build
     runs-on: ubuntu-latest
     env:
-      API_TOKEN_GITHUB: ${{ secrets.API_TOKEN_GITHUB }} #In settings-developer of user
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} #will automatically be defined
-      DOCKERHUB_PASS: ${{ secrets.DOCKERHUB_PASS }}
     steps:
     - uses: actions/checkout@v2
-    - name: Generate docker images if Dockerfile exists
+    - name: Generate helm charts repository
       run: |
-        sudo apt-get update
-        sudo apt-get install -y jq
-        cat index.json | jq -r '.[]|[.name, .version, .appVersion] | @tsv' |
-        while IFS=$'\t' read -r name version appVersion; do
-          cd $name
-          if test -f Dockerfile; then
-            echo "Generating docker for name: $name, version: $version: appVersion: $appVersion"
-            sed -i -e "s/%VERSION%/$appVersion/" ./Dockerfile
-            echo "Building docker image for $name $appVersion"
-            echo "$DOCKERHUB_PASS" | docker login -u dmartinlozano --password-stdin
-            docker build . -t dmartinlozano/$name
-            docker tag dmartinlozano/$name:latest dmartinlozano/$name:$appVersion
-            docker push dmartinlozano/$name:latest
-            docker push dmartinlozano/$name:$appVersion
-          fi
-          cd ..
+        mkdir -p charts_repository
+        curl https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | bash
+        cat index.json | jq -r '.[]|[.name, .version] | @tsv' |
+        while IFS=$'\t' read -r name version; do
+          echo "Building helm chart for $name $version"
+          echo 'apiVersion: v1' > $name/charts/Chart.yaml
+          echo 'appVersion: "'$version'"' >> $name/charts/Chart.yaml
+          echo 'description: A Helm chart for '$name >> $name/charts/Chart.yaml
+          echo 'name: '$name >> $name/charts/Chart.yaml
+          echo 'version: "'$version'"' >> $name/charts/Chart.yaml
+          helm lint $name/charts
+          helm package -d "$name-$version" $name/charts
+          cp $name-$version/$name-$version.tgz charts_repository
+          rm -f $name-$version/$name-$version.tgz
         done
+        helm repo index --merge index.yaml .
+        for i in $(find . -name "README.md")
+        do
+          echo ""  >>README.tmp
+          echo ""  >>README.tmp
+          echo ""  >>README.tmp
+          echo "========================================================================="  >>README.tmp
+          cat $i >>README.tmp
+        done
+        sed "s/%README%/cat README.tmp/e" basic_readme.md > README.md
+    - name: Commit files
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        git add index.yaml README.md charts_repository
+        git commit -m "$(date +%s)" -a
+    - name: Push changes
+      uses: ad-m/github-push-action@master
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        force: true
