@@ -5,32 +5,32 @@ on:
     - '*'
 
 jobs:
-#  docker_build:
-#    runs-on: ubuntu-latest
-#    env:
-#      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} #will automatically be defined
-#      DOCKERHUB_PASS: ${{ secrets.DOCKERHUB_PASS }}
-#    steps:
-#    - uses: actions/checkout@v2
-#    - name: Generate docker images if Dockerfile exists
-#      run: |
-#        cat index.json | jq -r '.[]|[.name, .version, .appVersion] | @tsv' |
-#        while IFS=$'\t' read -r name version appVersion; do
-#          cd $name
-#          if test -f Dockerfile; then
-#            echo "Generating docker for name: $name, version: $version: appVersion: $appVersion"
-#            sed -i -e "s/%VERSION%/$appVersion/" ./Dockerfile
-#            echo "Building docker image for $name $appVersion"
-#            echo "$DOCKERHUB_PASS" | docker login -u dmartinlozano --password-stdin
-#            docker build . -t dmartinlozano/$name
-#            docker tag dmartinlozano/$name:latest dmartinlozano/$name:$appVersion
-#            docker push dmartinlozano/$name:latest
-#            docker push dmartinlozano/$name:$appVersion
-#          fi
-#          cd ..
-#        done
+  docker_build:
+    runs-on: ubuntu-latest
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} #will automatically be defined
+      DOCKERHUB_PASS: ${{ secrets.DOCKERHUB_PASS }}
+    steps:
+    - uses: actions/checkout@v2
+    - name: Generate docker images if Dockerfile exists
+      run: |
+        cat index.json | jq -r '.[]|[.name, .version, .appVersion] | @tsv' |
+        while IFS=$'\t' read -r name version appVersion; do
+          cd $name
+          if test -f Dockerfile; then
+            echo "Generating docker for name: $name, version: $version: appVersion: $appVersion"
+            sed -i -e "s/%VERSION%/$appVersion/" ./Dockerfile
+            echo "Building docker image for $name $appVersion"
+            echo "$DOCKERHUB_PASS" | docker login -u dmartinlozano --password-stdin
+            docker build . -t dmartinlozano/$name
+            docker tag dmartinlozano/$name:latest dmartinlozano/$name:$appVersion
+            docker push dmartinlozano/$name:latest
+            docker push dmartinlozano/$name:$appVersion
+          fi
+          cd ..
+        done
   helm_build:
-#    needs: docker_build
+    needs: docker_build
     runs-on: ubuntu-latest
     env:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} #will automatically be defined
