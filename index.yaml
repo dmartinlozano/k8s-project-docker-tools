@@ -1,1 +1,33 @@
 apiVersion: v1
+entries:
+  gitbucket:
+  - apiVersion: v1
+    appVersion: 4.33.0
+    created: "2020-05-19T17:44:51.762255988Z"
+    description: A Helm chart for gitbucket
+    digest: b5bda81ba59f1bb46b53889cd13ed8f2aa03a97646c3b4a2c51054c59f6febab
+    name: gitbucket
+    urls:
+    - charts_repository/gitbucket-4.33.0.tgz
+    version: 4.33.0
+  testlink:
+  - apiVersion: v1
+    appVersion: 1.9.20
+    created: "2020-05-19T17:44:51.762613091Z"
+    description: A Helm chart for testlink
+    digest: 11ac2e7774750f7be7bc69460c98742565fc64a7a3c6d45a8019f402a3d5e3a0
+    name: testlink
+    urls:
+    - charts_repository/testlink-1.9.20.tgz
+    version: 1.9.20
+  wiki-js:
+  - apiVersion: v1
+    appVersion: 2.3.81
+    created: "2020-05-19T17:44:51.763055194Z"
+    description: A Helm chart for wiki-js
+    digest: 7e5709fdb5c0e27450fe4ab155a02b9e51898d475be2aa270192e240f0e5b831
+    name: wiki-js
+    urls:
+    - charts_repository/wiki-js-2.3.81.tgz
+    version: 2.3.81
+generated: "2020-05-19T17:44:51.749901084Z"
